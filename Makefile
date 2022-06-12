@@ -28,14 +28,14 @@ api: build
 
 .PHONY: validate
 validate:
-	sam validate --config-file samconfig.toml --template-file template.yaml
+	sam validate --config-file samconfig.toml --template-file $(TEMPLATE)
 
 .PHONY: package
 package: build
 	. .env
 	sam package --s3-bucket $(S3_BUCKET) \
 		--template-file $(TEMPLATE) \
-		--output-template-file packaged.yaml
+		--output-template-file $(PACKAGED_TEMPLATE)
 
 .PHONY: deploy
 deploy: package
