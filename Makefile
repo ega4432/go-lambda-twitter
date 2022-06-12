@@ -3,6 +3,7 @@ PACKAGED_TEMPLATE = packaged.yaml
 
 .PHONY: build
 build: clean
+	go build ./lambda -o main
 	sam build
 
 .PHONY: clean
@@ -11,11 +12,11 @@ clean:
 
 .PHONY: test
 test:
-	go test -v ./go-lambda-twitter
+	go test -v ./lambda
 
 .PHONY: install
 install:
-	go get ./go-lambda-twitter
+	go get -u ./lambda
 
 .PHONY: local
 local: build

@@ -21,7 +21,7 @@ Parameters:
     Type: String
   Prefix:
     Type: String
-    Default: "書きました！:"
+    Default: "[bot]書きました！:"
     Description: "Prefix of tweet text"
 
 Resources:
