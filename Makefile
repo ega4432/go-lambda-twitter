@@ -3,7 +3,7 @@ PACKAGED_TEMPLATE = packaged.yaml
 
 .PHONY: build
 build: clean
-	go build ./lambda -o main
+	make -C lambda build
 	sam build
 
 .PHONY: clean
@@ -12,11 +12,11 @@ clean:
 
 .PHONY: test
 test:
-	go test -v ./lambda
+	make -C lambda test
 
 .PHONY: install
 install:
-	go get -u ./lambda
+	make -C lambda install
 
 .PHONY: local
 local: build
@@ -28,14 +28,14 @@ api: build
 
 .PHONY: validate
 validate:
-	sam validate --config-file samconfig.toml --template-file template.yaml
+	sam validate --config-file samconfig.toml --template-file $(TEMPLATE)
 
 .PHONY: package
 package: build
 	. .env
 	sam package --s3-bucket $(S3_BUCKET) \
 		--template-file $(TEMPLATE) \
-		--output-template-file packaged.yaml
+		--output-template-file $(PACKAGED_TEMPLATE)
 
 .PHONY: deploy
 deploy: package
