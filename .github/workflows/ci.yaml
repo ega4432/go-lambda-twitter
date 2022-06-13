@@ -20,19 +20,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: debug
+        run: |
+          pwd
+          ls -ltra
+
       - name: Setup go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.16'
-
-      - name: Setup SAM
-        uses: aws-actions/setup-sam@v2
+          go-version-file: 'lambda/go.mod'
 
       - name: Configure AWS
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SAM
+        uses: aws-actions/setup-sam@v2
 
       - name: Prepare
         run: |
@@ -40,7 +45,7 @@ jobs:
 
       - name: Test
         run: |
-          go build ./lambda -o main
+          make build
 
           sam validate --debug \
             --template-file template.yaml
