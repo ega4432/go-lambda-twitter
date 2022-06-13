@@ -12,9 +12,9 @@ env:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    permittions:
+    permissions:
       id-token: write
-      contentts: read
+      contents: read
 
     steps:
       - name: Checkout
