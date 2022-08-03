@@ -1,5 +1,7 @@
 # go-lambda-twitter
 
+[![ci](https://github.com/ega4432/go-lambda-twitter/actions/workflows/ci.yaml/badge.svg)](https://github.com/ega4432/go-lambda-twitter/actions/workflows/ci.yaml)
+
 This is a sample template for go-lambda-twitter - Below is a brief explanation of what we have generated for you:
 
 ```bash
