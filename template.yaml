@@ -19,10 +19,6 @@ Parameters:
     Type: String
   TwitterAccessSecret:
     Type: String
-  Prefix:
-    Type: String
-    Default: "[bot]書きました！:"
-    Description: "Prefix of tweet text"
 
 Resources:
   TweetFunction:
@@ -45,7 +41,6 @@ Resources:
           TWITTER_CONSUMER_SECRET: !Ref TwitterConsumerSecret
           TWITTER_ACCESS_TOKEN: !Ref TwitterAccessToken
           TWITTER_ACCESS_SECRET: !Ref TwitterAccessSecret
-          PREFIX: !Ref Prefix
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

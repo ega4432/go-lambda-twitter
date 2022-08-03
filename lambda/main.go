@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -30,7 +30,6 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	consumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
 	accessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
 	accessSecret := os.Getenv("TWITTER_ACCESS_SECRET")
-	prefix := os.Getenv("PREFIX")
 
 	if consumerKey == "" || consumerSecret == "" || accessToken == "" || accessSecret == "" {
 		return events.APIGatewayProxyResponse{
@@ -39,10 +38,9 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, err
 	}
 
-	tweetText := strings.Join([]string{prefix, b.Text}, " ")
 	client := New(consumerKey, consumerSecret, accessToken, accessSecret)
 
-	err = client.Post(tweetText)
+	err = client.Post(b.Text)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			Body:       err.Error(),
@@ -51,7 +49,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       "Tweeted successfully: " + tweetText,
+		Body:       fmt.Sprintf("Tweeted successfully: %s", b.Text),
 		StatusCode: http.StatusOK,
 	}, nil
 }
