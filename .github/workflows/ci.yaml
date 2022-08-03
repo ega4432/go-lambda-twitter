@@ -2,7 +2,8 @@ name: ci
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 env:
@@ -10,7 +11,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
-  ci:
+  sam:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -19,16 +20,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: debug
-        run: |
-          pwd
-          ls -ltra
-
-      - name: Setup go
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: 'lambda/go.mod'
 
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,15 +30,24 @@ jobs:
       - name: Setup SAM
         uses: aws-actions/setup-sam@v2
 
-      - name: Prepare
-        run: |
-          echo "Create env file from secrets ..."
+      - name: Validate
+        run: sam validate --debug --template-file template.yaml
 
-      - name: Test
-        run: |
-          make build
+      - name: Build
+        run: sam build --use-container
 
-          sam validate --debug \
-            --template-file template.yaml
+  go:
+    runs-on: ubuntu-latest
 
-          sam build --use-container
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'lambda/go.mod'
+
+      # - name: Lint
+      # - name: Test
+      # - name: Build
