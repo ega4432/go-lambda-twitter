@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_IAM_ROLE }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  sam:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SAM
+        uses: aws-actions/setup-sam@v2
+
+      - name: Validate
+        run: sam validate --debug --template-file template.yaml
+
+      - name: Build
+        run: sam build --use-container
+
+  go:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'lambda/go.mod'
+
+      # - name: Lint
+      # - name: Test
+      # - name: Build
