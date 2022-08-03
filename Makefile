@@ -3,11 +3,11 @@ PACKAGED_TEMPLATE = packaged.yaml
 
 .PHONY: build
 build: clean
-	go build ./lambda -o main
 	sam build
 
 .PHONY: clean
 clean:
+	rm -rf .aws-sam
 	rm -f $(PACKAGED_TEMPLATE)
 
 .PHONY: test

@@ -5,3 +5,4 @@ packaged.yaml
 samconfig.toml
 *.drawio
 .env*
+lambda/main
