@@ -16,20 +16,19 @@ type RequestBody struct {
 }
 
 type Response struct {
-	Message string `json:"message"`
+	Message   string `json:"message"`
+	TweetText string `json:"tweet_text,omitempty"`
+	TweetUrl  string `json:"tweet_url,omitempty"`
 }
 
 func tweetHandler(reqBody string) (events.APIGatewayProxyResponse, error) {
 	var b RequestBody
 	body := []byte(reqBody)
 	err := json.Unmarshal(body, &b)
-
 	tweetText := b.Text
 
 	if err != nil || tweetText == "" {
-		res := Response{Message: err.Error()}
-		jsonBody, _ := json.Marshal(res)
-
+		jsonBody, _ := json.Marshal(Response{Message: err.Error()})
 		return events.APIGatewayProxyResponse{
 			Body:       string(jsonBody),
 			StatusCode: http.StatusBadRequest,
@@ -42,29 +41,33 @@ func tweetHandler(reqBody string) (events.APIGatewayProxyResponse, error) {
 	accessSecret := os.Getenv("TWITTER_ACCESS_SECRET")
 
 	if consumerKey == "" || consumerSecret == "" || accessToken == "" || accessSecret == "" {
-		message := fmt.Sprintf("{ \"consumerKey\": %s, \"consumerSecret\": %s, \"accessToken\": %s, \"accessSecret\": %s }", consumerKey, consumerSecret, accessToken, accessSecret)
-		res := Response{Message: message}
-		jsonBody, _ := json.Marshal(res)
+		message := fmt.Sprintf("consumerKey: %s, consumerSecret: %s, accessToken: %s, accessSecret: %s\n", consumerKey, consumerSecret, accessToken, accessSecret)
+		jsonBody, _ := json.Marshal(Response{Message: message})
 		return events.APIGatewayProxyResponse{
 			Body:       string(jsonBody),
 			StatusCode: http.StatusInternalServerError,
-		}, err
+		}, errors.New("failed to get environment variable")
 	}
 
 	client := New(consumerKey, consumerSecret, accessToken, accessSecret)
 
-	err = client.Post(tweetText)
+	twRes, err := client.Post(tweetText)
 	if err != nil {
-		res := Response{Message: err.Error()}
-		jsonBody, _ := json.Marshal(res)
+		jsonBody, _ := json.Marshal(Response{Message: "Failed to post tweet"})
 		return events.APIGatewayProxyResponse{
 			Body:       string(jsonBody),
 			StatusCode: http.StatusInternalServerError,
 		}, err
 	}
 
+	res := Response{
+		Message:   "Tweeted successfully",
+		TweetText: tweetText,
+		TweetUrl:  fmt.Sprintf("https://twitter.com/ega4432/status/%s", twRes.Data.ID),
+	}
+	jsonBody, _ := json.Marshal(res)
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Tweeted successfully: %s", tweetText),
+		Body:       string(jsonBody),
 		StatusCode: http.StatusCreated,
 	}, nil
 }
@@ -72,8 +75,7 @@ func tweetHandler(reqBody string) (events.APIGatewayProxyResponse, error) {
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	switch request.HTTPMethod {
 	case http.MethodGet:
-		res := Response{Message: "OK"}
-		jsonBody, _ := json.Marshal(res)
+		jsonBody, _ := json.Marshal(Response{Message: "OK"})
 		return events.APIGatewayProxyResponse{
 			Body:       string(jsonBody),
 			StatusCode: http.StatusOK,

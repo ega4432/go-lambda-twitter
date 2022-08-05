@@ -40,10 +40,21 @@ make api
 **Calling health check endpoint with cURL**
 
 ```shell
+# GET
 curl --request GET \
     --url http://127.0.0.1:3000/health | jq .
 {
   "message": "OK"
+}
+
+# POST
+curl --request POST \
+  --url http://127.0.0.1:3000/tweet \
+  -d '{ "text": "test" }' | jq .
+{
+  "message": "Tweeted successfully",
+  "tweet_text": "test",
+  "tweet_url":"https://twitter.com/ega4432/status/1555603271665913856"
 }
 ```
 
