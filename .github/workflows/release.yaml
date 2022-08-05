@@ -15,3 +15,27 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3 # https://github.com/actions/checkout
+
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1 # https://github.com/aws-actions/configure-aws-credentials
+      with:
+        role-to-assume: ${{ env.AWS_ROLE_ARN }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Setup SAM
+      uses: aws-actions/setup-sam@v2 # https://github.com/aws-actions/setup-sam
+
+    - name: Build
+      run: sam build --use-container
+
+    - name: Package
+      run: sam package --s3-bucket ${{ secret.S3_BUCKET }} \
+        --template-file template.yaml \
+        --output-template-file packaged.yaml
+
+    - name: Deploy
+      run: sam deploy --stack-name go-lambda-tweet \
+        --template-file packaged.yaml \
+        --parameter-overrides "TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }},TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }},TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }},TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }}"
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset
