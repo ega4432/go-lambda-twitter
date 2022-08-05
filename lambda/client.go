@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -26,14 +26,14 @@ type Poll struct {
 	Options         []string `json:"options"`
 }
 
-type Media struct {
-	MediaIds      []string `json:"media_ids,omitempty"`
-	TaggedUserIds []string `json:"tagged_user_ids,omitempty"`
-}
+// type Media struct {
+// 	MediaIds      []string `json:"media_ids,omitempty"`
+// 	TaggedUserIds []string `json:"tagged_user_ids,omitempty"`
+// }
 
-type Geo struct {
-	PlaceId string `json:"place_id"`
-}
+// type Geo struct {
+// 	PlaceId string `json:"place_id"`
+// }
 
 type TweetRequest struct {
 	Text                  string `json:"text"`
@@ -85,7 +85,7 @@ func (c *Client) Post(tweetText string) error {
 	}
 
 	var twRes TweetResponse
-	resBody, err := ioutil.ReadAll(res.Body)
+	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
 	}

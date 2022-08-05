@@ -42,12 +42,10 @@ func TestHandler(t *testing.T) {
 	// 	}
 	// })
 
-	t.Run("Successful Request: health check", func(t *testing.T) {
+	t.Run("Successful Request", func(t *testing.T) {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
-			// res := Response{Message: "OK"}
-			// jsonBody, _ := json.Marshal(res)
-			fmt.Fprintf(w, "OKaaa")
+			fmt.Fprintln(w, "hello world")
 		}))
 
 		defer ts.Close()
