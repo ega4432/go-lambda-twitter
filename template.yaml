@@ -47,14 +47,4 @@ Resources:
           TWITTER_ACCESS_TOKEN: !Ref TwitterAccessToken
           TWITTER_ACCESS_SECRET: !Ref TwitterAccessSecret
 
-# TODO: 後で見直し
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  TweetAPI:
-    Description: "API Gateway endpoint URL for Prod environment for First Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/tweet"
-  TweetFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt TweetFunctionRole.Arn
