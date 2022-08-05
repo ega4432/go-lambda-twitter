@@ -65,7 +65,7 @@ func tweetHandler(reqBody string) (events.APIGatewayProxyResponse, error) {
 
 	return events.APIGatewayProxyResponse{
 		Body:       fmt.Sprintf("Tweeted successfully: %s", tweetText),
-		StatusCode: http.StatusOK,
+		StatusCode: http.StatusCreated,
 	}, nil
 }
 
