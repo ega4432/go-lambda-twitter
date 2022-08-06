@@ -16,7 +16,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: go
+    needs: Go
 
     steps:
       - name: Checkout

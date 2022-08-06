@@ -32,4 +32,11 @@ jobs:
       run: sam package --s3-bucket ${{ secrets.S3_BUCKET }} --output-template-file ./packaged.yaml
 
     - name: Deploy
-      run: sam deploy --stack-name go-lambda-tweet --parameter-overrides "TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }},TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }},TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }},TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }}" --no-confirm-changeset --no-fail-on-empty-changeset
+      run: |
+        sam deploy --stack-name go-lambda-tweet \
+          --template-file ./packaged.yaml \
+          --s3-bucket ${{ secrets.S3_BUCKET }} \
+          --parameter-overrides TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }} TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }} TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }} TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }} \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset \
+          --capabilities CAPABILITY_IAM
