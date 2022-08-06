@@ -34,7 +34,6 @@ jobs:
 
     - name: Deploy
       run: sam deploy --stack-name go-lambda-tweet \
-        --template-file packaged.yaml \
-        --parameter-overrides "TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }},TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }},TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }},TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }}"
+        --parameter-overrides "TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }},TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }},TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }},TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }}" \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset
