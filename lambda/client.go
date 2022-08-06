@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -26,14 +26,14 @@ type Poll struct {
 	Options         []string `json:"options"`
 }
 
-type Media struct {
-	MediaIds      []string `json:"media_ids,omitempty"`
-	TaggedUserIds []string `json:"tagged_user_ids,omitempty"`
-}
+// type Media struct {
+// 	MediaIds      []string `json:"media_ids,omitempty"`
+// 	TaggedUserIds []string `json:"tagged_user_ids,omitempty"`
+// }
 
-type Geo struct {
-	PlaceId string `json:"place_id"`
-}
+// type Geo struct {
+// 	PlaceId string `json:"place_id"`
+// }
 
 type TweetRequest struct {
 	Text                  string `json:"text"`
@@ -66,35 +66,35 @@ func New(consumerKey, consumerSecret, accessToken, accessSecret string) *Client 
 	}
 }
 
-func (c *Client) Post(tweetText string) error {
+func (c *Client) Post(tweetText string) (*TweetResponse, error) {
+	var r TweetResponse
 	httpClient := c.Config.Client(oauth1.NoContext, c.Token)
 	body := &TweetRequest{Text: tweetText}
 	buf, err := json.Marshal(body)
 	if err != nil {
-		return err
+		return &r, err
 	}
 
 	res, err := httpClient.Post(endpoint, "application/json", bytes.NewBuffer(buf))
 	if err != nil {
-		return err
+		return &r, err
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusCreated {
-		return errors.New(fmt.Sprintln(res))
+		return &r, errors.New(fmt.Sprintln(res))
 	}
 
-	var twRes TweetResponse
-	resBody, err := ioutil.ReadAll(res.Body)
+	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return &r, err
 	}
 
-	err = json.Unmarshal(resBody, &twRes)
+	err = json.Unmarshal(resBody, &r)
 	if err != nil {
-		return err
+		return &r, err
 	}
 
-	log.Printf("[INFO]: tweet result\n\ttweet id: %s\n\ttweet text: %s\n", twRes.Data.ID, twRes.Data.Text)
-	return nil
+	log.Printf("[INFO]: tweet result\n\ttweet id: %s\n\ttweet text: %s\n", r.Data.ID, r.Data.Text)
+	return &r, nil
 }

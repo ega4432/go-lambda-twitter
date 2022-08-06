@@ -11,24 +11,25 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
-  sam:
+  SAM:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    needs: go
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 # https://github.com/actions/checkout
 
       - name: Configure AWS
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1 # https://github.com/aws-actions/configure-aws-credentials
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup SAM
-        uses: aws-actions/setup-sam@v2
+        uses: aws-actions/setup-sam@v2 # https://github.com/aws-actions/setup-sam
 
       - name: Validate
         run: sam validate --debug --template-file template.yaml
@@ -36,18 +37,32 @@ jobs:
       - name: Build
         run: sam build --use-container
 
-  go:
+  Go:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 # https://github.com/actions/checkout
 
       - name: Setup go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v3 # https://github.com/actions/setup-go
         with:
           go-version-file: 'lambda/go.mod'
 
-      # - name: Lint
-      # - name: Test
-      # - name: Build
+      - name: Install dependencies
+        run: go get -t -u -v ./...
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3 # https://github.com/golangci/golangci-lint-action
+        with:
+          version: latest
+          working-directory: lambda
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Build
+        run: GOOS=linux GOARCH=amd64 go build -v -o main
