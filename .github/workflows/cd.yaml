@@ -1,4 +1,4 @@
-name: release
+name: cd
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  release:
+  cd:
     runs-on: ubuntu-latest
     permissions:
       id-token: write

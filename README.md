@@ -1,7 +1,7 @@
 # go-lambda-twitter
 
 [![ci](https://github.com/ega4432/go-lambda-twitter/actions/workflows/ci.yaml/badge.svg)](https://github.com/ega4432/go-lambda-twitter/actions/workflows/ci.yaml)
-[![release](https://github.com/ega4432/go-lambda-twitter/actions/workflows/release.yaml/badge.svg)](https://github.com/ega4432/go-lambda-twitter/actions/workflows/release.yaml)
+[![cd](https://github.com/ega4432/go-lambda-twitter/actions/workflows/cd.yaml/badge.svg)](https://github.com/ega4432/go-lambda-twitter/actions/workflows/release.yaml)
 
 This is a repository for **go-lambda-twitter** - Twitter client built by API Gateway + Lambda in AWS.
 
@@ -35,6 +35,8 @@ make
 **Invoking function locally through local API Gateway**
 
 ```shell
+cp env.example.json env.json
+
 make api
 ```
 
@@ -64,5 +66,7 @@ curl --request POST \
 From local
 
 ```shell
+cp .env.example .env
+
 make deploy
 ```
