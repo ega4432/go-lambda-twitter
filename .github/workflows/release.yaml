@@ -30,7 +30,6 @@ jobs:
 
     - name: Package
       run: sam package --s3-bucket ${{ secrets.S3_BUCKET }} \
-        --template-file template.yaml \
         --output-template-file packaged.yaml
 
     - name: Deploy
