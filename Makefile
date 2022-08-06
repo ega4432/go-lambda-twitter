@@ -35,16 +35,16 @@ validate:
 	sam validate --config-file samconfig.toml \
 		--template-file $(TEMPLATE)
 
+include .env
 .PHONY: package
 package: build
-	. .env
 	sam package --s3-bucket $(S3_BUCKET) \
-		--template-file $(TEMPLATE) \
 		--output-template-file $(PACKAGED_TEMPLATE)
 
+include .env
 .PHONY: deploy
 deploy: package
-	. .env
 	sam deploy --stack-name $(STACK_NAME) \
 		--template-file $(PACKAGED_TEMPLATE) \
-		--no-confirm-changeset
+		--no-confirm-changeset \
+		--no-fail-on-empty-changeset

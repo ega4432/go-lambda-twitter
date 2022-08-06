@@ -33,7 +33,8 @@ jobs:
 
     - name: Deploy
       run: |
-        sam deploy --stack-name go-lambda-tweet \
+        STACK_NAME=$(echo ${{ github.repository }} | sed -e 's#.*/##')
+        sam deploy --stack-name $STACK_NAME \
           --template-file ./packaged.yaml \
           --s3-bucket ${{ secrets.S3_BUCKET }} \
           --parameter-overrides TwitterConsumerKey=${{ secrets.TWITTER_CONSUMER_KEY }} TwitterConsumerSecret=${{ secrets.TWITTER_CONSUMER_SECRET }} TwitterAccessToken=${{ secrets.TWITTER_ACCESS_TOKEN }} TwitterAccessSecret=${{ secrets.TWITTER_ACCESS_SECRET }} \
